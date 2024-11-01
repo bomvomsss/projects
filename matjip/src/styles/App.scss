@@ -16,3 +16,21 @@
     min-height:100%;
   }
 }
+.mapBg{
+  position:absolute;
+  top:0;left:0;
+  z-index:1;
+  width:100vw;
+  height:100vh;
+  background:#333333b3;
+  display:none;
+  #map{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%, -50%);
+    z-index:1;
+  }
+  &.on{
+    display:block;
+  }
+}
