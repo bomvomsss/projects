@@ -1,0 +1,18 @@
+@import '/node_modules/bootstrap/scss/bootstrap.scss';
+
+.App{
+  padding:3em 10em;
+}
+.card{
+  height:32rem;
+  margin-bottom:3rem;
+}
+.card-img-top{
+  height:70%;
+  width:23rem;
+  overflow:hidden;
+  img{
+    width:100%;
+    min-height:100%;
+  }
+}
