@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 
-
 function KakaoMap() {
   
   useEffect(() => {
@@ -37,10 +36,9 @@ function KakaoMap() {
   return (
     <div
       id="map"
-      // ref={mapContainer}
       style={{
         width: "100%",
-        height: "500px",
+        height: "100vh",
       }}
     ></div>
   );

@@ -15,28 +15,28 @@ function App() {
 
   return (
     <div className="App">
-      <h1>맛집 리스트</h1>
       <div className="list">
-        <Row xs={1} md={4}>
-        {cardItem.map((item, i) => {
-          let x = cardItem.x;
-          let y = cardItem.y;
-          return (
-            <Col key={i}>
-              <Item btnOpen={btnOpen} setBtnOpen={setBtnOpen} cardItem={item} index={i} x={x} y={y}></Item>
-            </Col>
-            )
-          })}
-        </Row>
-        <div className={`${btnOpen ? "mapWrap on" : "mapWrap"}`}>
-          <ul className="clsBtn">
+        <div className="listInner">
+          <h1>맛집 리스트</h1>
+          <p className="search">검색 🔍</p>
+          <Row xs={1} md={3}>
+          {cardItem.map((item, i) => {
+            let x = cardItem.x;
+            let y = cardItem.y;
+            return (
+              <Col key={i}>
+                <Item btnOpen={btnOpen} setBtnOpen={setBtnOpen} cardItem={item} index={i} x={x} y={y}></Item>
+              </Col>
+              )
+            })}
+          </Row>
+        </div>
+        <div className={`${btnOpen ? "mapBox on" : "mapBox"}`}>
+          <ul className="clsBtn" onClick={clsMap}>
             <li></li>
             <li></li>
           </ul>
-          <div className="mapBox">
-            <KakaoMap onClick={(e) => {e.stopPropagation();}}/>
-          </div>
-          {/* <div className="mapBg" onClick={clsMap}></div> */}
+          <KakaoMap onClick={(e) => {e.stopPropagation();}}/>
         </div>
       </div>
     </div>

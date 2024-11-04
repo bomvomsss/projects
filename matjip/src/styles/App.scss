@@ -1,38 +1,46 @@
 @import '/node_modules/bootstrap/scss/bootstrap.scss';
 
 .App{
-  padding:3em 10em;
-}
-.card{
-  height:32rem;
-  margin-bottom:3rem;
-}
-.card-img-top{
-  height:70%;
-  width:23rem;
-  overflow:hidden;
-  img{
+  h1{
+    padding:1em .5em;
+    font-size:2.1em;
+  }
+  .list{
     width:100%;
-    min-height:100%;
-  }
-}
-.list{
-  display:flex;
-  gap-x:2em;
-  .row{
-    
-  }
-  .mapWrap{
-    display:none;
-    &.on{
-      display:block;
+    display:flex;
+    gap:2em;
+    height:100vh;
+    overflow:hidden;
+    .listInner{
+      width:50%;
+      padding-left: 5em;
+      overflow:scroll;
+      .row{
+        .card{
+          height:22rem;
+          margin-bottom:1rem;
+          .card-img-top{
+            height:60%;
+            width:100%;
+            overflow:hidden;
+            img{
+              width:100%;
+              min-height:100%;
+              object-fit:cover;
+            }
+          }
+          .card-body{
+            height:30%;
+          }
+        }  
+      }
     }
     .mapBox{
-      
-    }
-    .clsBtn{
-      width:10px;height:10px;
-      background:#fff;
-    }
-}
+      width:50%;
+      .clsBtn{
+        width:10px;height:10px;
+        background:#fff;
+      }
+    } 
+  }
 }
