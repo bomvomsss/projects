@@ -1,12 +1,12 @@
 import {Button, Card} from 'react-bootstrap';
-import {useState} from "react";
 
 function Item(props){
   let btnTxt = "지도 보기";
+  const mapUrl = "https://map.kakao.com/link/search/";
 
   let toggleMap = () => {
+    // window.open(mapUrl + props.cardItem.link);
     props.setBtnOpen(!props.btnOpen);
-    console.log('hey')
   }
   return(
     <>
