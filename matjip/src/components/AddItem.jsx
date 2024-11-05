@@ -2,14 +2,11 @@ import MapKakao from './MapKakao'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-const AddItem = () => {
-  
+const AddItem = (props) => {
+
   return(
-    <div
-      className="modal show"
-      style={{ display: 'block', position: 'absolute' }}
-    >      
-      <Modal.Dialog>
+    <div>
+      <Modal show={props.show} onHide={props.handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>추가하기</Modal.Title>
         </Modal.Header>
@@ -18,14 +15,15 @@ const AddItem = () => {
             <input type="text" placeholder="상호명"/>
             <button type="submit" name="확인">검색</button>
           </form>
-          <p><MapKakao /></p>
+          <MapKakao />
+          <p>상호명</p>
+          <p>주소</p>
         </Modal.Body>
-
         <Modal.Footer>
-          <Button variant="secondary">Close</Button>
-          <Button variant="primary">Save changes</Button>
+          <Button variant="primary" onClick={()=>props.handleClose}>추가</Button>
+          <Button variant="secondary" onClick={()=>props.handleClose}>취소</Button>
         </Modal.Footer>
-      </Modal.Dialog>
+      </Modal>
     </div>
   )  
 }
