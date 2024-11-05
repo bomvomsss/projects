@@ -12,15 +12,30 @@
     height:100vh;
     overflow:hidden;
     .listInner{
-      width:50%;
+      width:100%;
       padding-left: 5em;
       overflow:scroll;
+      .wrap{
+        display:flex;
+        margin-bottom:1rem;
+        .formBox{
+          display:flex;
+          gap:0.2rem;
+          button{
+            border:none;
+            background:transparent;
+          }
+          input{
+            width:20rem;
+          }
+        }
+      }
       .row{
         .card{
-          height:22rem;
-          margin-bottom:1rem;
+          height:35rem;
+          margin-bottom:2.2rem;
           .card-img-top{
-            height:60%;
+            height:70%;
             width:100%;
             overflow:hidden;
             img{
@@ -35,12 +50,9 @@
         }  
       }
     }
-    .mapBox{
-      width:50%;
-      .clsBtn{
-        width:10px;height:10px;
-        background:#fff;
-      }
-    } 
   }
+}
+// modal
+.modalBox{
+  position:absolute;
 }
