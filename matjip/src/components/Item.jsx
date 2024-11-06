@@ -5,7 +5,7 @@ function Item(props){
  
   return(
     <>
-      <Card style={{ width: '24rem' }}>
+      <Card style={{ width: '26rem' }}>
         <div className="card-img-top">
           <img src={props.cardItem.img} alt="" />
         </div>

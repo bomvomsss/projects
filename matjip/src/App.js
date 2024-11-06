@@ -10,19 +10,22 @@ function App() {
   const [show, setShow] = useState(false);
 
   const handleShow = () => setShow(true);
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    console.log('ho')
+    setShow(false);
+  }
 
   return (
     <div className="App">
       <div className="list">
         <h1>맛집 리스트</h1>
-        <div className="wrap">
+        <div className="headWrap">
           <form className="formBox">
             <input type="text"></input>
             <button className="search">🔍 검색</button>
           </form>
           <button className="add" onClick={handleShow}>➕ 추가</button>
-          <AddItem show={show} />
+          <AddItem show={show} handleClose={handleClose}/>
         </div>
         <Row xs={1} md={4}>
         {cardItem.map((item, i) => {

@@ -1,49 +1,78 @@
 @import '/node_modules/bootstrap/scss/bootstrap.scss';
 
 .App{
-  h1{
-    padding:1em .5em;
-    font-size:2.1em;
-  }
   .list{
     width:100%;
-    gap:2em;
-    padding:2em;
-    .wrap{
+    padding:50px;
+    h1{
+      padding:10px 15px 40px 0;
+      font-size:30px;
+    }
+    .headWrap{
       display:flex;
-      margin-bottom:1rem;
+      margin-bottom:35px;
+      padding-left:0;
       .formBox{
         display:flex;
-        gap:0.2rem;
+        gap:10px;
+        margin-right:20px;
+        input{
+          width:365px;
+        }
         button{
+          padding:0 3px;
           border:none;
           background:transparent;
         }
-        input{
-          width:20rem;
-        }
+      }
+      .add{
+        border:none;
+        background:transparent;
       }
     }
     .row{
-      padding:2rem;
-      .card{
-        height:35rem;
-        margin-bottom:2.2rem;
-        .card-img-top{
-          height:70%;
-          width:100%;
-          overflow:hidden;
-          img{
+      padding:2px;
+      .col{            
+        margin-bottom:50px;
+        .card{
+          height:550px;
+          .card-img-top{
+            height:70%;
             width:100%;
-            min-height:100%;
-            object-fit:cover;
+            overflow:hidden;
+            img{
+              width:100%;
+              min-height:100%;
+              object-fit:cover;
+            }
           }
-        }
-        .card-body{
-          height:30%;
-        }
-      }  
+          .card-body{
+            height:30%;
+          }
+        }  
+      }
     }
   }
 }
 // modal
+.modal{
+  .modal-body{
+    form{
+      display:flex;
+      justify-content: space-around;
+      padding:15px;
+      input{
+        width:80%;
+      }
+      button{
+        width:18%;
+      }
+    }
+    #map{
+      margin-bottom:20px;
+    }
+    p{
+      padding:5px 0 5px 5px;
+    }
+  }
+}
