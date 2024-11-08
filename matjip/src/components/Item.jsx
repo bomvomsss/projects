@@ -7,7 +7,7 @@ function Item(props){
     <>
       <Card style={{ width: '26rem' }}>
         <div className="card-img-top">
-          <img src={props.cardItem.img} alt="" />
+          <img src={props.cardItem.img} alt={props.cardItem.title} />
         </div>
         <Card.Body>
           <Card.Title>{props.cardItem.title}</Card.Title>
