@@ -1,0 +1,11 @@
+/* 에디터 컴포넌트 css */
+.container{
+  padding:50px 0;
+  max-width:60vw;
+  margin:0 auto;
+}
+b{font-weight:bold;}
+i{font-style:italic;}
+#editor{
+  border:1px solid #000;
+}

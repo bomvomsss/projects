@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Nav from "@/components/Nav";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -14,9 +15,15 @@ export default function RootLayout({
   return (
     <html lang='ko'>
       <body>
-        <header>Header</header>
+        <header>
+          <h1>MFF</h1>
+          <button>만들기</button>
+          <button>알림</button>
+        </header>
         {children}
-        <footer>Footer</footer>
+        <footer>
+          <Nav />
+        </footer>
       </body>
     </html>
   );
