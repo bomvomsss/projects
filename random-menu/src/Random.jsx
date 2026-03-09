@@ -6,7 +6,7 @@ function Random() {
   const [category, setCategory] = useState("all");
 
   useEffect(() => {
-    fetch("/menu.json")
+    fetch(import.meta.env.BASE_URL + "/menu.json")
       .then((res) => res.json())
       .then((data) => setMenuData(data));
   }, []);
