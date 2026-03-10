@@ -1,0 +1,307 @@
+/* styles/global.css — 전역 레이아웃 & 공통 컴포넌트 */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #111111;
+  --border-color: #dddddd;
+  --hover-color: #f5f5f5;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+/* PC 전체 레이아웃 (사이드바 + 메인콘텐츠) */
+.layout {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* 좌측 사이드바 */
+.sidebar {
+  width: 240px;
+  padding: 2rem;
+  border-right: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.sidebar h1 {
+  margin: 0 0 2rem 0;
+  font-size: 2.5rem;
+  letter-spacing: -2px;
+}
+
+.sidebar h1 a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nav-menu a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.nav-menu a:hover {
+  text-decoration: underline;
+}
+
+/* 우측 메인 콘텐츠 영역 */
+.main-content {
+  flex: 1;
+  padding: 3rem 4rem;
+}
+
+/* 게시글 그리드 */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem 1.5rem;
+}
+
+.post-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.post-card:hover {
+  background: #dddddd;
+}
+
+/* 작품 표지 썸네일 */
+.post-cover {
+  width: 100%;
+  background-color: var(--hover-color);
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+  margin-bottom: 0.8rem;
+}
+
+.post-card h3 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-card p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* 카테고리 뱃지 */
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border: 1px solid var(--text-color);
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* 공통 버튼 */
+.btn-black {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* 피드 헤더 (제목 + 뷰 토글) */
+.feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #111;
+  padding-bottom: 1rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.feed-header h2 {
+  margin: 0;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.view-btn {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  padding: 0;
+}
+
+.view-btn:hover {
+  border-color: #111;
+  color: #111;
+}
+
+.view-btn.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+/* 리스트 뷰 */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.post-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.post-list-item:hover {
+  background: var(--hover-color);
+}
+
+.post-list-cover {
+  width: 56px;
+  height: 76px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.post-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-list-info h3 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-list-author {
+  margin: 0 0 0.4rem 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.post-list-tags {
+  margin: 0;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.list-tag {
+  font-size: 0.78rem;
+  color: #999;
+}
+
+/* 상세 페이지 — 제목 + 컬렉션 버튼 행 */
+.post-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.post-title-row h1 {
+  margin: 0 0 0.5rem 0;
+  flex: 1;
+}
+
+/* 구독 버튼 */
+.btn-subscribe {
+  background: #fff;
+  border: 1px solid #111;
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 20px;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-subscribe.active {
+  background: #111;
+  color: #fff;
+}
+
+/* 컬렉션 버튼 */
+.btn-collection {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.btn-collection.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+/* 컬렉션 페이지 — 제거 버튼 */
+.btn-collection-remove {
+  margin-top: 0.5rem;
+  background: none;
+  border: 1px solid #ccc;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #888;
+  border-radius: 3px;
+}
+
+.btn-collection-remove:hover {
+  border-color: #111;
+  color: #111;
+}
