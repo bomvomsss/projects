@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx vite build)"
+      "Bash(npx vite build)",
+      "Bash(node fix-posts.cjs)",
+      "Bash(rm fix-posts.cjs)"
     ]
   }
 }
