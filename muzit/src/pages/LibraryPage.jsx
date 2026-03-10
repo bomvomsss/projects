@@ -7,9 +7,7 @@ function LibraryPage({ posts }) {
 
   return (
     <div>
-      <h2 style={{ borderBottom: "2px solid #111", paddingBottom: "1rem", marginTop: 0 }}>
-        내 작품 관리
-      </h2>
+      <h2 className='page-title'>내 작품 관리</h2>
       {myPosts.length === 0 ? (
         <p>아직 올린 작품이 없습니다. '작품 올리기' 버튼을 눌러 시작해보세요!</p>
       ) : (
