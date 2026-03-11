@@ -1,6 +1,6 @@
-// pages/WritePage.jsx
+// pages/EditPage.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -12,28 +12,24 @@ import EditorToolbar from "../components/EditorToolbar";
 import WordCount from "../components/WordCount";
 import "../styles/editor.css";
 
-const DRAFT_KEY = "muzit_draft";
-
-function loadDraft() {
-  try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) ?? null; }
-  catch { return null; }
-}
-
-function WritePage({ addPost }) {
+function EditPage({ posts, updatePost }) {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const draft = loadDraft();
+  const post = posts.find((p) => p.id === parseInt(id));
 
   const [formData, setFormData] = useState({
-    title:         draft?.title         ?? "",
-    coverUrl:      draft?.coverUrl      ?? "",
-    tags:          draft?.tags          ?? "",
-    isPublic:      draft?.isPublic      ?? true,
-    allowComments: draft?.allowComments ?? true,
-    isAdult:       draft?.isAdult       ?? false,
-    isPaid:        draft?.isPaid        ?? false,
+    title:         post?.title         ?? "",
+    subtitle:      post?.subtitle      ?? "",
+    coverUrl:      post?.coverUrl      ?? "",
+    tags:          post?.tags          ?? "",
+    isPublic:      post?.isPublic      ?? true,
+    allowComments: post?.allowComments ?? true,
+    isAdult:       post?.isAdult       ?? false,
+    isPaid:        post?.isPaid        ?? false,
   });
-  const [draftSaved, setDraftSaved] = useState(false);
+
   const [showPreview, setShowPreview] = useState(false);
+  const [showDateModal, setShowDateModal] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -44,42 +40,49 @@ function WritePage({ addPost }) {
       Image.configure({ inline: false }),
       Placeholder.configure({ placeholder: "자유롭게 이야기를 작성해 주세요..." }),
     ],
-    content: draft?.content ?? "",
+    content: post?.content ?? "",
   });
+
+  if (!post) {
+    return (
+      <div className='not-found'>
+        <h2>게시글을 찾을 수 없습니다.</h2>
+        <button onClick={() => navigate("/")} className='btn-black'>메인으로 돌아가기</button>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const content = editor ? editor.getHTML() : "";
     const textContent = editor ? editor.getText() : "";
-
     if (!formData.title.trim() || !textContent.trim()) {
       return alert("제목과 작품 내용을 모두 입력해주세요.");
     }
-
-    addPost({ ...formData, content });
-    localStorage.removeItem(DRAFT_KEY);
-    navigate("/");
+    setShowDateModal(true);
   };
 
-  const handleSaveDraft = () => {
+  const confirmUpdate = (keepDate) => {
     const content = editor ? editor.getHTML() : "";
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...formData, content }));
-    setDraftSaved(true);
-    setTimeout(() => setDraftSaved(false), 2000);
+    updatePost(post.id, {
+      ...formData,
+      content,
+      date: keepDate ? post.date : new Date().toISOString(),
+    });
+    setShowDateModal(false);
+    navigate(`/post/${post.id}`);
   };
 
   const previewContent = editor ? editor.getHTML() : "";
 
   return (
     <div className='write-page'>
+      {/* 미리보기 모달 */}
       {showPreview && (
         <div className='preview-overlay' onClick={() => setShowPreview(false)}>
           <div className='preview-modal' onClick={(e) => e.stopPropagation()}>
@@ -88,9 +91,7 @@ function WritePage({ addPost }) {
               <button className='preview-close' onClick={() => setShowPreview(false)}>✕</button>
             </div>
             <div className='preview-modal-body'>
-              {formData.coverUrl && (
-                <img src={formData.coverUrl} alt='표지' className='preview-cover' />
-              )}
+              {formData.coverUrl && <img src={formData.coverUrl} alt='표지' className='preview-cover' />}
               <h1 className='preview-title'>{formData.title || "제목 없음"}</h1>
               <div className='post-content-body' dangerouslySetInnerHTML={{ __html: previewContent || "<p>내용 없음</p>" }} />
               {formData.tags && (
@@ -104,6 +105,25 @@ function WritePage({ addPost }) {
           </div>
         </div>
       )}
+
+      {/* 날짜 선택 모달 */}
+      {showDateModal && (
+        <div className='preview-overlay' onClick={() => setShowDateModal(false)}>
+          <div className='date-modal' onClick={(e) => e.stopPropagation()}>
+            <h3 className='date-modal-title'>업로드 시간 설정</h3>
+            <p className='date-modal-desc'>수정된 작품을 어떤 날짜로 발행할까요?</p>
+            <div className='date-modal-actions'>
+              <button className='btn-secondary' onClick={() => confirmUpdate(true)}>
+                기존 업로드 시간 유지
+              </button>
+              <button className='btn-black' onClick={() => confirmUpdate(false)}>
+                현재 시간으로 새로 발행
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <form className='write-form' onSubmit={handleSubmit}>
         <input
           type='text'
@@ -157,13 +177,9 @@ function WritePage({ addPost }) {
             </label>
           </div>
           <div className='write-actions'>
-            <button type='button' className='btn-secondary' onClick={() => setShowPreview(true)}>
-              미리보기
-            </button>
-            <button type='button' className='btn-secondary' onClick={handleSaveDraft}>
-              {draftSaved ? "저장됨 ✓" : "임시저장"}
-            </button>
-            <button type='submit' className='btn-black write-submit'>작품 발행하기</button>
+            <button type='button' className='btn-secondary' onClick={() => setShowPreview(true)}>미리보기</button>
+            <button type='button' className='btn-secondary' onClick={() => navigate(-1)}>취소</button>
+            <button type='submit' className='btn-black write-submit'>재발행하기</button>
           </div>
         </div>
       </form>
@@ -171,4 +187,4 @@ function WritePage({ addPost }) {
   );
 }
 
-export default WritePage;
+export default EditPage;

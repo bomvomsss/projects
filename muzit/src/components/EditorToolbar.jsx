@@ -79,9 +79,15 @@ function EditorToolbar({ editor }) {
         <Divider />
 
         {/* 정렬 */}
-        <ToolbarButton onClick={() => editor.chain().focus().setTextAlign("left").run()} isActive={editor.isActive({ textAlign: "left" })} title='왼쪽 정렬'>◀</ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().setTextAlign("center").run()} isActive={editor.isActive({ textAlign: "center" })} title='가운데 정렬'>◆</ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().setTextAlign("right").run()} isActive={editor.isActive({ textAlign: "right" })} title='오른쪽 정렬'>▶</ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().setTextAlign("left").run()} isActive={editor.isActive({ textAlign: "left" })} title='왼쪽 정렬'>
+          <img src='/icon/editor/left-align.svg' alt='왼쪽 정렬' width={16} height={16} />
+        </ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().setTextAlign("center").run()} isActive={editor.isActive({ textAlign: "center" })} title='가운데 정렬'>
+          <img src='/icon/editor/center-align.svg' alt='가운데 정렬' width={16} height={16} />
+        </ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().setTextAlign("right").run()} isActive={editor.isActive({ textAlign: "right" })} title='오른쪽 정렬'>
+          <img src='/icon/editor/right-align.svg' alt='오른쪽 정렬' width={16} height={16} />
+        </ToolbarButton>
 
         <Divider />
 

@@ -319,11 +319,12 @@
   background: #fff;
   color: #111;
   border: 1px solid #ccc;
-  padding: 14px 32px;
+  padding: 14px 40px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 2px;
   transition: background 0.15s;
+  min-width: 30%;
 }
 
 .btn-secondary:hover {
@@ -331,7 +332,71 @@
 }
 
 .write-submit {
-  padding: 14px 40px;
+  padding: 14px 28px;
   font-size: 16px;
   border-radius: 2px;
+}
+
+/* 미리보기 모달 */
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px;
+  overflow-y: auto;
+}
+
+.preview-modal {
+  background: #fff;
+  width: 100%;
+  max-width: 720px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.preview-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.preview-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #aaa;
+  padding: 0 4px;
+}
+
+.preview-close:hover {
+  color: #111;
+}
+
+.preview-modal-body {
+  padding: 40px 48px;
+}
+
+.preview-cover {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  margin-bottom: 28px;
+  border-radius: 2px;
+}
+
+.preview-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  line-height: 1.3;
 }

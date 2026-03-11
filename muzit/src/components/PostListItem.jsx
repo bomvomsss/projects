@@ -91,7 +91,7 @@ function PostListItem({ post, subscriptions, toggleSubscription, collections, to
           <div className="plc-icons">
             <button
               className={`plc-icon-btn ${isCollected ? "active" : ""}`}
-              title={isCollected ? "컬렉션에서 제거" : "컬렉션에 추가"}
+              title={isCollected ? "북마크 제거" : "북마크 추가"}
               onClick={(e) => { e.stopPropagation(); toggleCollection(post.id); }}
             >
               {isCollected ? "★" : "☆"}
