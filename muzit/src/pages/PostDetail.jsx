@@ -6,13 +6,19 @@ import { getAuthor } from "../data/authors";
 import { formatDate } from "../utils/date";
 
 function PostDetail({
-  posts, subscriptions, toggleSubscription,
-  collections, toggleCollection,
-  commentsMap, addComment, toggleCommentLike,
+  posts,
+  subscriptions,
+  toggleSubscription,
+  collections,
+  toggleCollection,
+  commentsMap,
+  addComment,
+  toggleCommentLike,
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [commentText, setCommentText] = useState("");
+  const [commentSort, setCommentSort] = useState("newest"); // "newest" | "oldest"
 
   const post = posts.find((p) => p.id === parseInt(id));
   const comments = commentsMap?.[parseInt(id)] ?? [];
@@ -39,21 +45,39 @@ function PostDetail({
 
   return (
     <div className='post-detail'>
-      <button className='btn-back' onClick={() => navigate(-1)}>←</button>
+      <div className='post-detail-upper'>
+        <button className='btn-back' onClick={() => navigate(-1)}>
+          ←
+        </button>
+      </div>
 
       <div className='post-detail-header'>
         <div className='post-title-row'>
           <h1>{post.title}</h1>
           <div className='post-title-actions'>
             {post.author === "my_account" && (
-              <button className='btn-edit' onClick={() => navigate(`/edit/${post.id}`)}>수정</button>
+              <button
+                className='btn-edit'
+                onClick={() => navigate(`/edit/${post.id}`)}
+              >
+                수정
+              </button>
             )}
             <button
               className={`btn-collection ${collections.has(post.id) ? "active" : ""}`}
               onClick={() => toggleCollection(post.id)}
               title={collections.has(post.id) ? "북마크 제거" : "북마크 추가"}
             >
-              {collections.has(post.id) ? "★" : "☆"}
+              <img
+                src={
+                  collections.has(post.id)
+                    ? "/icon/common/bookmark_actived.svg"
+                    : "/icon/common/bookmark.svg"
+                }
+                alt='북마크'
+                width={18}
+                height={18}
+              />
             </button>
           </div>
         </div>
@@ -70,14 +94,21 @@ function PostDetail({
         </div>
       </div>
 
-      <div className='post-content-body' dangerouslySetInnerHTML={{ __html: post.content }} />
+      <div
+        className='post-content-body'
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
 
       {post.tags && (
         <div className='post-tags'>
           {post.tags.split(",").map((tag, idx) => {
             const trimmedTag = tag.trim();
             if (!trimmedTag) return null;
-            return <span key={idx} className='tag-badge'>{trimmedTag}</span>;
+            return (
+              <span key={idx} className='tag-badge'>
+                {trimmedTag}
+              </span>
+            );
           })}
         </div>
       )}
@@ -98,39 +129,89 @@ function PostDetail({
               rows={2}
             />
             <div className='comment-write-footer'>
-              <button type='submit' className='btn-black comment-submit' disabled={!commentText.trim()}>
+              <button
+                type='submit'
+                className='btn-black comment-submit'
+                disabled={!commentText.trim()}
+              >
                 등록
               </button>
             </div>
           </div>
         </form>
 
+        {/* 댓글 정렬 */}
+        {comments.length > 0 && (
+          <div className='comment-sort'>
+            <button
+              className={`comment-sort-btn ${commentSort === "newest" ? "active" : ""}`}
+              onClick={() => setCommentSort("newest")}
+            >
+              최신순
+            </button>
+            <button
+              className={`comment-sort-btn ${commentSort === "oldest" ? "active" : ""}`}
+              onClick={() => setCommentSort("oldest")}
+            >
+              오래된순
+            </button>
+          </div>
+        )}
+
         {/* 댓글 목록 */}
         <div className='comment-list'>
-          {comments.map((c) => {
-            const author = getAuthor(c.author);
-            return (
-              <div key={c.id} className='comment-item'>
-                <img src={author.avatar} alt={c.author} className='comment-avatar' />
-                <div className='comment-body'>
-                  <div className='comment-meta'>
-                    <span className='comment-author'>{c.author}</span>
-                    <span className='comment-date'>{formatDate(c.date)}</span>
-                  </div>
-                  <p className='comment-content'>{c.content}</p>
-                  <div className='comment-actions'>
-                    <button
-                      className={`comment-action-btn ${c.liked ? "liked" : ""}`}
-                      onClick={() => toggleCommentLike(post.id, c.id)}
-                    >
-                      ♡ {c.likes}
-                    </button>
-                    <button className='comment-action-btn'>답글 {c.replies}</button>
+          {[...comments]
+            .sort((a, b) =>
+              commentSort === "newest"
+                ? new Date(b.date) - new Date(a.date)
+                : new Date(a.date) - new Date(b.date),
+            )
+            .map((c) => {
+              const author = getAuthor(c.author);
+              return (
+                <div key={c.id} className='comment-item'>
+                  <img
+                    src={author.avatar}
+                    alt={c.author}
+                    className='comment-avatar'
+                  />
+                  <div className='comment-body'>
+                    <div className='comment-meta'>
+                      <span className='comment-author'>{c.author}</span>
+                      <span className='comment-date'>{formatDate(c.date)}</span>
+                    </div>
+                    <p className='comment-content'>{c.content}</p>
+                    <div className='comment-actions'>
+                      <button
+                        className={`comment-action-btn ${c.liked ? "liked" : ""}`}
+                        onClick={() => toggleCommentLike(post.id, c.id)}
+                      >
+                        <img
+                          src={
+                            c.liked
+                              ? "/icon/common/like_actived.svg"
+                              : "/icon/common/like.svg"
+                          }
+                          alt='좋아요'
+                          width={14}
+                          height={14}
+                        />
+                        {c.likes}
+                      </button>
+                      <button className='comment-action-btn'>
+                        <img
+                          src='/icon/common/comment.svg'
+                          alt='답글'
+                          width={14}
+                          height={14}
+                        />
+                        {c.replies}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     </div>

@@ -1,4 +1,73 @@
 /* styles/global.css — 전역 레이아웃 & 공통 컴포넌트 */
+
+/* ── CSS Reset ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+/* ─────────────────────────────────────────────────────────── */
+
 :root {
   --bg-color: #ffffff;
   --text-color: #111111;
@@ -7,7 +76,7 @@
 }
 
 body {
-  margin: 0;
+  scrollbar-gutter: stable;
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family:
@@ -443,6 +512,9 @@ body {
 }
 
 .nav-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: #888;
   text-decoration: none;
   font-size: 16px;
@@ -456,6 +528,18 @@ body {
 .nav-menu a.active {
   color: var(--text-color);
   font-weight: 700;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.plc-reaction-btn {
+  display: inline-flex;
+  align-items: self-end;
+  gap: 4px;
 }
 
 /* 우측 메인 콘텐츠 영역 */
@@ -669,7 +753,7 @@ body {
 
 .plc-icons {
   display: flex;
-  gap: 6px;
+  gap: 12px;
 }
 
 .plc-icon-btn {
@@ -677,8 +761,6 @@ body {
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: #aaa;
-  padding: 4px 6px;
   border-radius: 3px;
   transition: color 0.12s;
 }
@@ -764,6 +846,25 @@ body {
   margin-top: 48px;
   padding-top: 32px;
   border-top: 1px solid var(--border-color);
+}
+
+.comment-sort {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.comment-sort-btn {
+  background: none;
+  font-size: 13px;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0;
+}
+
+.comment-sort-btn.active {
+  color: var(--text-color);
+  font-weight: 700;
 }
 
 .comment-section-title {
@@ -889,6 +990,9 @@ body {
   color: #aaa;
   padding: 0;
   transition: color 0.12s;
+  align-items: center;
+  display: flex;
+  gap: 5px;
 }
 
 .comment-action-btn:hover {
@@ -953,7 +1057,6 @@ body {
   font-size: 12px;
   color: #aaa;
 }
-
 /* ── 북마크/컬렉션 페이지 ── */
 .cg-tab-header {
   display: flex;
@@ -975,10 +1078,12 @@ body {
   font-size: 15px;
   font-weight: 500;
   color: #999;
-  padding: 12px 20px 14px;
+  padding: 12px 20px 20px;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
-  transition: color 0.1s, border-color 0.1s;
+  transition:
+    color 0.1s,
+    border-color 0.1s;
 }
 
 .cg-tab.active {
@@ -1007,7 +1112,9 @@ body {
   padding: 10px 18px;
   border-radius: 6px;
   margin-bottom: 20px;
-  transition: border-color 0.1s, color 0.1s;
+  transition:
+    border-color 0.1s,
+    color 0.1s;
 }
 
 .cg-new-btn:hover {
@@ -1059,7 +1166,7 @@ body {
 }
 
 .cg-card:hover {
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .cg-card-cover {
@@ -1238,7 +1345,7 @@ body {
 
 /* ── 커뮤니티 페이지 ── */
 .community-page {
-  max-width: 760px;
+  width: 100%;
 }
 
 /* 글쓰기 영역 */
@@ -1408,7 +1515,7 @@ body {
 
 /* ── 설정 페이지 ── */
 .settings-page {
-  max-width: 560px;
+  max-width: 760px;
 }
 
 .settings-group {
@@ -1692,6 +1799,72 @@ body {
   justify-content: flex-end;
 }
 
+/* 공지사항 관리 */
+.admin-notice-add {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-notice-input {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.admin-notice-input:focus {
+  border-color: #111;
+}
+
+.admin-notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.admin-notice-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-notice-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-notice-title {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-notice-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.admin-notice-btns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.admin-notice-save {
+  padding: 6px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 /* 사이드바 하단 CTA */
 .sidebar-cta {
   margin-top: 48px;
@@ -1710,7 +1883,6 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  margin-bottom: 32px;
   padding: 0;
   font-weight: bold;
 }
@@ -1839,6 +2011,9 @@ body {
 }
 
 /* 상세 페이지 — 제목 + 컬렉션 버튼 행 */
+.post-detail-upper {
+  margin-bottom: 32px;
+}
 .post-detail-header {
   padding-bottom: 30px;
   border-bottom: 1px solid #eee;
@@ -1862,6 +2037,7 @@ body {
 }
 .post-content-body {
   font-size: 16px;
+  padding: 30px 15px;
 }
 /* 작품 상세 — 부제목 */
 .post-subtitle {
@@ -1874,7 +2050,6 @@ body {
 
 /* 작품 상세 — 태그 영역 */
 .post-tags {
-  margin-top: 30px;
   padding-top: 24px;
   border-top: 1px solid #eee;
   font-size: 14px;
@@ -1912,7 +2087,9 @@ body {
   cursor: pointer;
   border-radius: 4px;
   color: #555;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .btn-edit:hover {
@@ -1957,8 +2134,6 @@ body {
 
 /* 구독 버튼 */
 .btn-subscribe {
-  background: #fff;
-  border: 1px solid #111;
   padding: 4px 8px;
   font-size: 12px;
   font-weight: 600;
@@ -1970,30 +2145,13 @@ body {
     color 0.15s;
 }
 
-.btn-subscribe.active {
-  display: none;
-}
-
 /* 컬렉션 버튼 */
 .btn-collection {
   background: #fff;
-  border: 1px solid #ccc;
-  padding: 5px 8px;
-  font-size: 15px;
   cursor: pointer;
-  border-radius: 4px;
   white-space: nowrap;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
   flex-shrink: 0;
   margin-top: 6px;
-}
-
-.btn-collection.active {
-  background: #111;
-  color: #fff;
-  border-color: #111;
 }
 
 /* 컬렉션 페이지 — 제거 버튼 */

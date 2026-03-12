@@ -1,13 +1,6 @@
 // components/RightSidebar.jsx
 import { useNavigate } from "react-router-dom";
 
-const announcements = [
-  { id: 1, title: "서비스 점검 안내 (3월 15일 02:00~04:00)", date: "2026-03-10" },
-  { id: 2, title: "신규 기능 업데이트: 커뮤니티 오픈!", date: "2026-03-08" },
-  { id: 3, title: "유료 결제 서비스 오픈 예정 안내", date: "2026-03-05" },
-  { id: 4, title: "성인 작품 인증 절차 변경 안내", date: "2026-03-01" },
-];
-
 const trending = [
   "예시작품제목",
   "김하늘",
@@ -21,7 +14,7 @@ const trending = [
   "커뮤니티",
 ];
 
-function RightSidebar() {
+function RightSidebar({ announcements = [] }) {
   const navigate = useNavigate();
 
   return (

@@ -8,10 +8,14 @@ const MENU_LABELS = {
   settings:      "설정",
 };
 
-function AdminPage({ menuConfig, setMenuConfig }) {
+function AdminPage({ menuConfig, setMenuConfig, announcements, addAnnouncement, updateAnnouncement, deleteAnnouncement }) {
   const [authors, setAuthors] = useState(getAllAuthors);
   const [editTarget, setEditTarget] = useState(null); // { name, avatar, bio }
   const [saved, setSaved] = useState(false);
+
+  // 공지사항 관련 state
+  const [newNoticeTitle, setNewNoticeTitle] = useState("");
+  const [editNotice, setEditNotice] = useState(null); // { id, title }
 
   const openEdit = (author) => setEditTarget({ ...author });
 
@@ -54,6 +58,78 @@ function AdminPage({ menuConfig, setMenuConfig }) {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ── 공지사항 관리 ── */}
+      <section className="admin-section">
+        <h3 className="admin-section-title">공지사항 관리</h3>
+        <p className="admin-section-desc">우측 사이드바에 표시될 공지사항을 관리합니다.</p>
+
+        {/* 새 공지사항 입력 */}
+        <div className="admin-notice-add">
+          <input
+            className="admin-notice-input"
+            placeholder="새 공지사항 제목 입력"
+            value={newNoticeTitle}
+            onChange={(e) => setNewNoticeTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && newNoticeTitle.trim()) {
+                addAnnouncement(newNoticeTitle.trim());
+                setNewNoticeTitle("");
+              }
+            }}
+          />
+          <button
+            className="btn-black"
+            onClick={() => {
+              if (newNoticeTitle.trim()) {
+                addAnnouncement(newNoticeTitle.trim());
+                setNewNoticeTitle("");
+              }
+            }}
+          >
+            추가
+          </button>
+        </div>
+
+        {/* 공지사항 목록 */}
+        <ul className="admin-notice-list">
+          {announcements.map((a) => (
+            <li key={a.id} className="admin-notice-item">
+              {editNotice?.id === a.id ? (
+                <>
+                  <input
+                    className="admin-notice-input"
+                    value={editNotice.title}
+                    onChange={(e) => setEditNotice({ ...editNotice, title: e.target.value })}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") { updateAnnouncement(a.id, editNotice.title); setEditNotice(null); }
+                      if (e.key === "Escape") setEditNotice(null);
+                    }}
+                    autoFocus
+                  />
+                  <button className="btn-black admin-notice-save" onClick={() => { updateAnnouncement(a.id, editNotice.title); setEditNotice(null); }}>저장</button>
+                  <button className="btn-secondary" onClick={() => setEditNotice(null)}>취소</button>
+                </>
+              ) : (
+                <>
+                  <div className="admin-notice-info">
+                    <span className="admin-notice-title">{a.title}</span>
+                    <span className="admin-notice-date">{a.date}</span>
+                  </div>
+                  <div className="admin-notice-btns">
+                    <button className="cg-icon-btn" onClick={() => setEditNotice({ id: a.id, title: a.title })}>
+                      <img src="/icon/common/edit.svg" alt="수정" width={15} height={15} />
+                    </button>
+                    <button className="cg-icon-btn" onClick={() => deleteAnnouncement(a.id)}>
+                      <img src="/icon/common/delete.svg" alt="삭제" width={15} height={15} />
+                    </button>
+                  </div>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* ── 사용자 관리 ── */}

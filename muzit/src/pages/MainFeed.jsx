@@ -16,9 +16,9 @@ function MainFeed({
 
   return (
     <div>
-      <div className='feed-banner'>
+      {/* <div className='feed-banner'>
         <img src='/banner/banner.png' alt='배너' className='feed-banner-img' />
-      </div>
+      </div> */}
 
       <div className='feed-header'>
         <h2>전체 작품</h2>
