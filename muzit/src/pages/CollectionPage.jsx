@@ -133,9 +133,15 @@ function CollectionPage({
       {/* ── 전체 북마크 탭 ── */}
       {tab === "bookmarks" &&
         (bookmarkedPosts.length === 0 ? (
-          <p>
-            아직 북마크한 작품이 없습니다. 작품 상세 페이지에서 ☆ 버튼을 눌러
-            추가해보세요.
+          <p className='no-bookmark'>
+            아직 북마크한 작품이 없습니다. 작품 상세 페이지에서
+            <img
+              src='/icon/common/bookmark.svg'
+              alt='북마크로고'
+              width={15}
+              height={15}
+            />
+            버튼을 눌러 추가해보세요.
           </p>
         ) : view === "grid" ? (
           <div className='post-grid'>
@@ -308,36 +314,22 @@ function CollectionPage({
               className='cg-add-btn'
               onClick={() => setShowAddModal(true)}
             >
-              + 북마크에서 추가
+              + 추가
             </button>
           </div>
 
           {groupPosts.length === 0 ? (
             <p>이 컬렉션에 작품이 없습니다. 북마크에서 추가해보세요.</p>
           ) : (
-            <div className='post-grid'>
+            <div>
               {groupPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className='post-card'
-                  onClick={() => navigate(`/post/${post.id}`)}
-                >
-                  <img
-                    src={
-                      post.coverUrl ||
-                      "https://via.placeholder.com/300x400.png?text=No+Cover"
-                    }
-                    alt='cover'
-                    className='post-cover'
-                  />
-                  <h3>{post.title}</h3>
-                  <AuthorLink authorName={post.author} />
+                <div key={post.id} className='bk-card-wrap'>
+                  <BookmarkCard post={post} />
                   <button
-                    className='btn-collection-remove'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removePostFromGroup(selectedGroupId, post.id);
-                    }}
+                    className='bk-remove-btn'
+                    onClick={() =>
+                      removePostFromGroup(selectedGroupId, post.id)
+                    }
                   >
                     제거
                   </button>

@@ -1,4 +1,5 @@
-// pages/EditPage.jsx
+// pages/PostEditorPage.jsx
+// 작성(/write)과 수정(/edit/:id)을 하나의 컴포넌트로 처리
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -12,24 +13,45 @@ import EditorToolbar from "../components/EditorToolbar";
 import WordCount from "../components/WordCount";
 import "../styles/editor.css";
 
-function EditPage({ posts, updatePost }) {
+const DRAFT_KEY = "muzit_draft";
+
+function loadDraft() {
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) ?? null; }
+  catch { return null; }
+}
+
+function PostEditorPage({ posts, addPost, updatePost }) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const post = posts.find((p) => p.id === parseInt(id));
+  const isEdit = Boolean(id);
+  const post = isEdit ? posts.find((p) => p.id === parseInt(id)) : null;
+
+  // 수정 모드에서 존재하지 않는 게시물
+  if (isEdit && !post) {
+    return (
+      <div className='not-found'>
+        <h2>게시글을 찾을 수 없습니다.</h2>
+        <button onClick={() => navigate("/")} className='btn-black'>메인으로 돌아가기</button>
+      </div>
+    );
+  }
+
+  const draft = !isEdit ? loadDraft() : null;
 
   const [formData, setFormData] = useState({
-    title:         post?.title         ?? "",
-    subtitle:      post?.subtitle      ?? "",
-    coverUrl:      post?.coverUrl      ?? "",
-    tags:          post?.tags          ?? "",
-    isPublic:      post?.isPublic      ?? true,
-    allowComments: post?.allowComments ?? true,
-    isAdult:       post?.isAdult       ?? false,
-    isPaid:        post?.isPaid        ?? false,
+    title:         post?.title         ?? draft?.title         ?? "",
+    coverUrl:      post?.coverUrl      ?? draft?.coverUrl      ?? "",
+    tags:          post?.tags          ?? draft?.tags          ?? "",
+    isPublic:      post?.isPublic      ?? draft?.isPublic      ?? true,
+    allowComments: post?.allowComments ?? draft?.allowComments ?? true,
+    isAdult:       post?.isAdult       ?? draft?.isAdult       ?? false,
+    isPaid:        post?.isPaid        ?? draft?.isPaid        ?? false,
   });
-
+  const [draftSaved, setDraftSaved] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
+  const [useSchedule, setUseSchedule] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState("");
 
   const editor = useEditor({
     extensions: [
@@ -40,17 +62,8 @@ function EditPage({ posts, updatePost }) {
       Image.configure({ inline: false }),
       Placeholder.configure({ placeholder: "자유롭게 이야기를 작성해 주세요..." }),
     ],
-    content: post?.content ?? "",
+    content: post?.content ?? draft?.content ?? "",
   });
-
-  if (!post) {
-    return (
-      <div className='not-found'>
-        <h2>게시글을 찾을 수 없습니다.</h2>
-        <button onClick={() => navigate("/")} className='btn-black'>메인으로 돌아가기</button>
-      </div>
-    );
-  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -59,12 +72,24 @@ function EditPage({ posts, updatePost }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const content = editor ? editor.getHTML() : "";
     const textContent = editor ? editor.getText() : "";
     if (!formData.title.trim() || !textContent.trim()) {
       return alert("제목과 작품 내용을 모두 입력해주세요.");
     }
-    setShowDateModal(true);
+    if (isEdit) {
+      setShowDateModal(true);
+    } else {
+      const content = editor ? editor.getHTML() : "";
+      if (useSchedule) {
+        if (!scheduledAt) return alert("예약 날짜와 시간을 입력해주세요.");
+        if (new Date(scheduledAt) <= new Date()) return alert("예약 시간은 현재보다 미래여야 합니다.");
+        addPost({ ...formData, content, isScheduled: true, scheduledAt });
+      } else {
+        addPost({ ...formData, content });
+      }
+      localStorage.removeItem(DRAFT_KEY);
+      navigate("/");
+    }
   };
 
   const confirmUpdate = (keepDate) => {
@@ -78,10 +103,18 @@ function EditPage({ posts, updatePost }) {
     navigate(`/post/${post.id}`);
   };
 
+  const handleSaveDraft = () => {
+    const content = editor ? editor.getHTML() : "";
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...formData, content }));
+    setDraftSaved(true);
+    setTimeout(() => setDraftSaved(false), 2000);
+  };
+
   const previewContent = editor ? editor.getHTML() : "";
 
   return (
     <div className='write-page'>
+
       {/* 미리보기 모달 */}
       {showPreview && (
         <div className='preview-overlay' onClick={() => setShowPreview(false)}>
@@ -106,19 +139,15 @@ function EditPage({ posts, updatePost }) {
         </div>
       )}
 
-      {/* 날짜 선택 모달 */}
+      {/* 날짜 선택 모달 (수정 모드) */}
       {showDateModal && (
         <div className='preview-overlay' onClick={() => setShowDateModal(false)}>
           <div className='date-modal' onClick={(e) => e.stopPropagation()}>
             <h3 className='date-modal-title'>업로드 시간 설정</h3>
             <p className='date-modal-desc'>수정된 작품을 어떤 날짜로 발행할까요?</p>
             <div className='date-modal-actions'>
-              <button className='btn-secondary' onClick={() => confirmUpdate(true)}>
-                기존 업로드 시간 유지
-              </button>
-              <button className='btn-black' onClick={() => confirmUpdate(false)}>
-                현재 시간으로 새로 발행
-              </button>
+              <button className='btn-secondary' onClick={() => confirmUpdate(true)}>기존 업로드 시간 유지</button>
+              <button className='btn-black' onClick={() => confirmUpdate(false)}>현재 시간으로 새로 발행</button>
             </div>
           </div>
         </div>
@@ -126,21 +155,14 @@ function EditPage({ posts, updatePost }) {
 
       <form className='write-form' onSubmit={handleSubmit}>
         <input
-          type='text'
-          name='title'
+          type='text' name='title' required className='write-title'
           placeholder='제목을 입력하세요'
-          value={formData.title}
-          onChange={handleChange}
-          required
-          className='write-title'
+          value={formData.title} onChange={handleChange}
         />
         <input
-          type='text'
-          name='coverUrl'
+          type='text' name='coverUrl' className='write-cover-url'
           placeholder='표지 이미지 주소(URL) 추가 — 선택 사항'
-          value={formData.coverUrl}
-          onChange={handleChange}
-          className='write-cover-url'
+          value={formData.coverUrl} onChange={handleChange}
         />
 
         <div className='editor-wrapper'>
@@ -151,12 +173,9 @@ function EditPage({ posts, updatePost }) {
 
         <div className='write-footer'>
           <input
-            type='text'
-            name='tags'
-            placeholder='태그 입력 (예: 일상, 에세이, 판타지)'
-            value={formData.tags}
-            onChange={handleChange}
-            className='write-tags'
+            type='text' name='tags' className='write-tags'
+            placeholder='태그 입력 (쉼표로 구분합니다.)'
+            value={formData.tags} onChange={handleChange}
           />
           <div className='write-options'>
             <label className='option-label'>
@@ -176,10 +195,44 @@ function EditPage({ posts, updatePost }) {
               유료 결제
             </label>
           </div>
+
+          {/* 업로드 예약 — 작성 모드에서만 */}
+          {!isEdit && (
+            <div className='write-schedule'>
+              <label className='option-label'>
+                <input
+                  type='checkbox' checked={useSchedule}
+                  onChange={(e) => { setUseSchedule(e.target.checked); if (!e.target.checked) setScheduledAt(""); }}
+                />
+                업로드 예약
+              </label>
+              {useSchedule && (
+                <input
+                  type='datetime-local' className='schedule-input'
+                  value={scheduledAt}
+                  min={new Date(Date.now() + 60000).toISOString().slice(0, 16)}
+                  onChange={(e) => setScheduledAt(e.target.value)}
+                />
+              )}
+            </div>
+          )}
+
           <div className='write-actions'>
-            <button type='button' className='btn-secondary' onClick={() => setShowPreview(true)}>미리보기</button>
-            <button type='button' className='btn-secondary' onClick={() => navigate(-1)}>취소</button>
-            <button type='submit' className='btn-black write-submit'>재발행하기</button>
+            <button type='button' className='btn-secondary' onClick={() => setShowPreview(true)}>
+              미리보기
+            </button>
+            {!isEdit ? (
+              <button type='button' className='btn-secondary' onClick={handleSaveDraft}>
+                {draftSaved ? "저장됨 ✓" : "임시저장"}
+              </button>
+            ) : (
+              <button type='button' className='btn-secondary' onClick={() => navigate(-1)}>
+                취소
+              </button>
+            )}
+            <button type='submit' className='btn-black write-submit'>
+              {isEdit ? "재발행하기" : useSchedule ? "예약 발행" : "작품 발행하기"}
+            </button>
           </div>
         </div>
       </form>
@@ -187,4 +240,4 @@ function EditPage({ posts, updatePost }) {
   );
 }
 
-export default EditPage;
+export default PostEditorPage;

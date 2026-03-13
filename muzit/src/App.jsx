@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,7 +10,7 @@ import {
 import "./styles/global.css";
 
 import MainFeed from "./pages/MainFeed";
-import WritePage from "./pages/WritePage";
+import PostEditorPage from "./pages/PostEditorPage";
 import PostDetail from "./pages/PostDetail";
 import SubscriptionFeed from "./pages/SubscriptionFeed";
 import CollectionPage from "./pages/CollectionPage";
@@ -23,24 +23,28 @@ import NotificationPage from "./pages/NotificationPage";
 import AuthorProfile from "./pages/AuthorProfile";
 import Header from "./components/Header";
 import SearchPage from "./pages/SearchPage";
-import EditPage from "./pages/EditPage";
 import AdminPage from "./pages/AdminPage";
+import AdminNoticePage from "./pages/AdminNoticePage";
 import CommunityPage from "./pages/CommunityPage";
+import MyChannelPage from "./pages/MyChannelPage";
 import RightSidebar from "./components/RightSidebar";
 import {
-  initialPosts,
   initialSubscriptions,
   initialCollections,
-  initialAnnouncements,
   initialCommunityPosts,
   initialCollectionGroups,
   initialCommentsMap,
 } from "./data/dummy";
+import { fetchPublicPosts } from "./api/posts";
+import {
+  fetchAnnouncements,
+  createAnnouncement,
+  updateAnnouncement as updateAnnouncementApi,
+  deleteAnnouncement as deleteAnnouncementApi,
+} from "./api/announcements";
 
 function App() {
-  const [subscriptions, setSubscriptions] = useState(
-    initialSubscriptions,
-  );
+  const [subscriptions, setSubscriptions] = useState(initialSubscriptions);
   const [collections, setCollections] = useState(initialCollections);
 
   const toggleSubscription = (author) => {
@@ -59,7 +63,11 @@ function App() {
     });
   };
 
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetchPublicPosts().then(setPosts).catch(console.error);
+  }, []);
 
   const [menuConfig, setMenuConfig] = useState({
     subscriptions: true,
@@ -67,21 +75,28 @@ function App() {
     settings: true,
   });
 
-  const [announcements, setAnnouncements] = useState(initialAnnouncements);
+  const [announcements, setAnnouncements] = useState([]);
 
-  const addAnnouncement = (title) =>
-    setAnnouncements((prev) => [
-      { id: Date.now(), title, date: new Date().toISOString().slice(0, 10) },
-      ...prev,
-    ]);
+  useEffect(() => {
+    fetchAnnouncements().then(setAnnouncements).catch(console.error);
+  }, []);
 
-  const updateAnnouncement = (id, title) =>
+  const addAnnouncement = async ({ title, content = "" }) => {
+    const created = await createAnnouncement({ title, content });
+    setAnnouncements((prev) => [created, ...prev]);
+  };
+
+  const updateAnnouncement = async (id, { title, content }) => {
+    const updated = await updateAnnouncementApi(id, { title, content });
     setAnnouncements((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, title } : a))
+      prev.map((a) => (a.id === id ? updated : a)),
     );
+  };
 
-  const deleteAnnouncement = (id) =>
+  const deleteAnnouncement = async (id) => {
+    await deleteAnnouncementApi(id);
     setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+  };
 
   const [communityPosts, setCommunityPosts] = useState(initialCommunityPosts);
 
@@ -130,7 +145,9 @@ function App() {
     );
   };
 
-  const [collectionGroups, setCollectionGroups] = useState(initialCollectionGroups);
+  const [collectionGroups, setCollectionGroups] = useState(
+    initialCollectionGroups,
+  );
 
   const createCollectionGroup = (name) =>
     setCollectionGroups((prev) => [
@@ -209,6 +226,15 @@ function App() {
     );
   };
 
+  const deletePost = (id) => {
+    setPosts((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  // 피드에 노출할 포스트: 임시저장·예약 미도달 제외
+  const publicPosts = posts.filter(
+    (p) => !p.isDraft && !(p.isScheduled && new Date(p.scheduledAt) > new Date())
+  );
+
   return (
     <Router>
       <Header />
@@ -218,7 +244,15 @@ function App() {
             <NavLink to='/' end>
               {({ isActive }) => (
                 <>
-                  <img src={isActive ? "/icon/common/home_actived.svg" : "/icon/common/home.svg"} alt='' className='nav-icon' />
+                  <img
+                    src={
+                      isActive
+                        ? "/icon/common/home_actived.svg"
+                        : "/icon/common/home.svg"
+                    }
+                    alt=''
+                    className='nav-icon'
+                  />
                   홈
                 </>
               )}
@@ -227,7 +261,15 @@ function App() {
               <NavLink to='/subscriptions'>
                 {({ isActive }) => (
                   <>
-                    <img src={isActive ? "/icon/common/personal_actived.svg" : "/icon/common/personal.svg"} alt='' className='nav-icon' />
+                    <img
+                      src={
+                        isActive
+                          ? "/icon/common/subscribe_actived.svg"
+                          : "/icon/common/subscribe.svg"
+                      }
+                      alt=''
+                      className='nav-icon'
+                    />
                     구독
                   </>
                 )}
@@ -237,7 +279,15 @@ function App() {
               <NavLink to='/collection'>
                 {({ isActive }) => (
                   <>
-                    <img src={isActive ? "/icon/common/bookmark_actived.svg" : "/icon/common/bookmark.svg"} alt='' className='nav-icon' />
+                    <img
+                      src={
+                        isActive
+                          ? "/icon/common/bookmark_actived.svg"
+                          : "/icon/common/bookmark.svg"
+                      }
+                      alt=''
+                      className='nav-icon'
+                    />
                     북마크
                   </>
                 )}
@@ -246,7 +296,15 @@ function App() {
             <NavLink to='/community'>
               {({ isActive }) => (
                 <>
-                  <img src={isActive ? "/icon/common/community_actived.svg" : "/icon/common/community.svg"} alt='' className='nav-icon' />
+                  <img
+                    src={
+                      isActive
+                        ? "/icon/common/community_actived.svg"
+                        : "/icon/common/community.svg"
+                    }
+                    alt=''
+                    className='nav-icon'
+                  />
                   커뮤니티
                 </>
               )}
@@ -255,21 +313,45 @@ function App() {
               <NavLink to='/settings'>
                 {({ isActive }) => (
                   <>
-                    <img src={isActive ? "/icon/common/setting_actived.svg" : "/icon/common/setting.svg"} alt='' className='nav-icon' />
+                    <img
+                      src={
+                        isActive
+                          ? "/icon/common/setting_actived.svg"
+                          : "/icon/common/setting.svg"
+                      }
+                      alt=''
+                      className='nav-icon'
+                    />
                     설정
                   </>
                 )}
               </NavLink>
             )}
+            <NavLink to='/my-channel'>
+              {({ isActive }) => (
+                <>
+                  <img
+                    src={
+                      isActive
+                        ? "/icon/common/personal_actived.svg"
+                        : "/icon/common/personal.svg"
+                    }
+                    alt=''
+                    className='nav-icon'
+                  />
+                  내 채널
+                </>
+              )}
+            </NavLink>
           </nav>
           <div className='sidebar-cta'>
             <Link to='/write' className='btn-black'>
               작품 올리기
             </Link>
           </div>
-          <Link to='/admin' className='sidebar-admin-link'>
+          {/* <Link to='/admin' className='sidebar-admin-link'>
             관리자
-          </Link>
+          </Link> */}
         </aside>
 
         <main className='main-content'>
@@ -279,7 +361,7 @@ function App() {
               element={
                 <div className='page-with-right-sidebar'>
                   <MainFeed
-                    posts={posts}
+                    posts={publicPosts}
                     subscriptions={subscriptions}
                     toggleSubscription={toggleSubscription}
                     collections={collections}
@@ -294,7 +376,7 @@ function App() {
               element={
                 <div className='page-with-right-sidebar'>
                   <SubscriptionFeed
-                    posts={posts}
+                    posts={publicPosts}
                     subscriptions={subscriptions}
                     toggleSubscription={toggleSubscription}
                     collections={collections}
@@ -334,7 +416,7 @@ function App() {
               path='/search'
               element={
                 <SearchPage
-                  posts={posts}
+                  posts={publicPosts}
                   subscriptions={subscriptions}
                   toggleSubscription={toggleSubscription}
                   collections={collections}
@@ -357,11 +439,18 @@ function App() {
                 </div>
               }
             />
-            <Route path='/write' element={<WritePage addPost={addPost} />} />
             <Route
-              path='/edit/:id'
-              element={<EditPage posts={posts} updatePost={updatePost} />}
+              path='/my-channel'
+              element={
+                <MyChannelPage
+                  posts={posts}
+                  deletePost={deletePost}
+                  subscriptions={subscriptions}
+                />
+              }
             />
+            <Route path='/write' element={<PostEditorPage posts={posts} addPost={addPost} updatePost={updatePost} />} />
+            <Route path='/edit/:id' element={<PostEditorPage posts={posts} addPost={addPost} updatePost={updatePost} />} />
             <Route
               path='/admin'
               element={
@@ -369,9 +458,27 @@ function App() {
                   menuConfig={menuConfig}
                   setMenuConfig={setMenuConfig}
                   announcements={announcements}
+                  deleteAnnouncement={deleteAnnouncement}
+                />
+              }
+            />
+            <Route
+              path='/admin/notice/new'
+              element={
+                <AdminNoticePage
+                  announcements={announcements}
                   addAnnouncement={addAnnouncement}
                   updateAnnouncement={updateAnnouncement}
-                  deleteAnnouncement={deleteAnnouncement}
+                />
+              }
+            />
+            <Route
+              path='/admin/notice/edit/:id'
+              element={
+                <AdminNoticePage
+                  announcements={announcements}
+                  addAnnouncement={addAnnouncement}
+                  updateAnnouncement={updateAnnouncement}
                 />
               }
             />

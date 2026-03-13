@@ -292,6 +292,35 @@
   gap: 32px;
 }
 
+/* 업로드 예약 */
+.write-schedule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.schedule-input {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+  outline: none;
+  color: var(--text-color);
+  transition: border-color 0.15s;
+}
+
+.schedule-input:focus {
+  border-color: #111;
+}
+
+/* 내 채널 — 예약 라벨 */
+.mcp-schedule-label {
+  font-size: 12px;
+  color: #e07b00;
+  margin: 2px 0 0;
+}
+
 .option-label {
   display: flex;
   align-items: center;

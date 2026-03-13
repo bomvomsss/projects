@@ -18,24 +18,27 @@ function RightSidebar({ announcements = [] }) {
   const navigate = useNavigate();
 
   return (
-    <aside className="right-sidebar">
+    <aside className='right-sidebar'>
       {/* 공지사항 */}
-      <section className="rs-section">
-        <h3 className="rs-title">공지사항</h3>
-        <ul className="rs-notice-list">
+      <section className='rs-section'>
+        <h3 className='rs-title'>공지사항</h3>
+        <ul className='rs-notice-list'>
           {announcements.map((a) => (
-            <li key={a.id} className="rs-notice-item">
-              <button className="rs-notice-btn" onClick={() => navigate("/notifications")}>
+            <li key={a.id} className='rs-notice-item'>
+              <button
+                className='rs-notice-btn'
+                onClick={() => navigate("/notifications")}
+              >
                 {a.title}
               </button>
-              <span className="rs-notice-date">{a.date}</span>
+              <span className='rs-notice-date'>{a.date}</span>
             </li>
           ))}
         </ul>
       </section>
 
       {/* 실시간 검색순위 */}
-      <section className="rs-section">
+      {/* <section className="rs-section">
         <h3 className="rs-title">실시간 검색순위</h3>
         <ol className="rs-trend-list">
           {trending.map((term, i) => (
@@ -50,7 +53,7 @@ function RightSidebar({ announcements = [] }) {
             </li>
           ))}
         </ol>
-      </section>
+      </section> */}
     </aside>
   );
 }
